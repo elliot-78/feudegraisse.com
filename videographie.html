@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Vidéographie</title>
+<title>Retro Media Player</title>
 
 <style>
 body {
@@ -17,7 +17,7 @@ body {
 
 /* WINDOW */
 .window {
-    width: 700px;
+    width: 750px;
     background: #c0c0c0;
     border: 4px solid #808080;
     box-shadow: 6px 6px 0 #000;
@@ -31,7 +31,6 @@ body {
     font-size: 14px;
     display: flex;
     justify-content: space-between;
-    align-items: center;
 }
 
 /* VIDEO AREA */
@@ -48,20 +47,11 @@ video {
 /* CONTROLS */
 .controls {
     display: flex;
+    align-items: center;
     gap: 10px;
     padding: 10px;
     background: #c0c0c0;
-    align-items: center;
 }
-
-<label>🔊</label>
-<input
-    type="range"
-    min="0"
-    max="1"
-    step="0.01"
-    value="1"
-    id="volumeSlider">
 
 button {
     background: #e0e0e0;
@@ -75,12 +65,14 @@ button:active {
     border: 2px inset #fff;
 }
 
-.bar {
+/* SEEK BAR */
+.seekbar {
     flex: 1;
-    height: 10px;
+    height: 12px;
     background: #888;
     border: 2px inset #ddd;
     position: relative;
+    cursor: pointer;
 }
 
 .progress {
@@ -89,6 +81,21 @@ button:active {
     background: #00ffcc;
 }
 
+/* TOOLTIP */
+.tooltip {
+    position: absolute;
+    top: -25px;
+    background: black;
+    color: white;
+    font-size: 12px;
+    padding: 2px 5px;
+    display: none;
+}
+
+/* VOLUME */
+.volume {
+    width: 100px;
+}
 </style>
 </head>
 
@@ -97,7 +104,7 @@ button:active {
 <div class="window">
 
     <div class="titlebar">
-        <div>Gargouilles pour toujours</div>
+        <div>Retro Media Player</div>
         <div>_ □ ✕</div>
     </div>
 
@@ -108,48 +115,94 @@ button:active {
     </div>
 
     <div class="controls">
-        <button id="playPauseBtn" onclick="togglePlay()">▶</button>
 
-        <div class="bar">
+        <button id="playBtn">▶</button>
+
+        <div class="seekbar" id="seekbar">
             <div class="progress" id="progress"></div>
+            <div class="tooltip" id="tooltip">0:00</div>
         </div>
+
+        <input type="range" min="0" max="1" step="0.01" value="1" id="volume">
+
+        <button id="fsBtn">⛶</button>
+
     </div>
 
 </div>
 
 <script>
 const video = document.getElementById("video");
+const playBtn = document.getElementById("playBtn");
 const progress = document.getElementById("progress");
+const seekbar = document.getElementById("seekbar");
+const tooltip = document.getElementById("tooltip");
+const volume = document.getElementById("volume");
+const fsBtn = document.getElementById("fsBtn");
 
-const button = document.getElementById("playPauseBtn");
-
-function togglePlay() {
+// PLAY / PAUSE
+playBtn.onclick = () => {
     if (video.paused) {
         video.play();
+        playBtn.textContent = "⏸";
     } else {
         video.pause();
+        playBtn.textContent = "▶";
     }
-}
-video.addEventListener("play", () => {
-    button.textContent = "⏸";
-});
+};
 
-video.addEventListener("pause", () => {
-    button.textContent = "▶";
-});
-
-video.addEventListener("ended", () => {
-    button.textContent = "▶";
-});
-
+// UPDATE PROGRESS BAR
 video.addEventListener("timeupdate", () => {
     const percent = (video.currentTime / video.duration) * 100;
     progress.style.width = percent + "%";
 });
 
-const volumeSlider = document.getElementById("volumeSlider");
-
-volumeSlider.addEventListener("input", function () {
-    video.volume = this.value;
+// VOLUME
+volume.addEventListener("input", () => {
+    video.volume = volume.value;
 });
+
+seekbar.addEventListener("mousemove", (e) => {
+    const rect = seekbar.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const percent = x / rect.width;
+
+    const time = percent * video.duration;
+
+    if (!isNaN(time)) {
+        tooltip.style.display = "block";
+        tooltip.style.left = x + "px";
+        tooltip.textContent = formatTime(time);
+    }
+});
+
+seekbar.addEventListener("mouseleave", () => {
+    tooltip.style.display = "none";
+});
+
+// CLICK TO SEEK
+seekbar.addEventListener("click", (e) => {
+    const rect = seekbar.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const percent = x / rect.width;
+
+    video.currentTime = percent * video.duration;
+});
+
+// FULLSCREEN
+fsBtn.onclick = () => {
+    if (video.requestFullscreen) {
+        video.requestFullscreen();
+    }
+};
+
+// FORMAT TIME
+function formatTime(sec) {
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return m + ":" + (s < 10 ? "0" + s : s);
+}
 </script>
+
+</body>
+</html>
