@@ -1,6 +1,57 @@
 
-<object id="MediaPlayer" ... classid="CLSID:22D6F312-B0F6-11D0-94AB-0080C74C7E95">
-  <param name="filename" value="URL">
-  <param name="Showcontrols" value="True">
-  <embed type="application/x-mplayer2" src="URL" ...>
-</object>
+// Source - https://stackoverflow.com/a/728100
+// Posted by Mister Lucky
+// Retrieved 2026-07-04, License - CC BY-SA 2.5
+
+<html>
+<head>
+  <title>so-wmp</title>
+  <script>
+
+    onload=function() {
+      player = document.getElementById("wmp");
+      player.URL = "test.mp3";
+    };
+
+    function add(text) {
+      document.body
+        .appendChild(document.createElement("div"))
+        .appendChild(document.createTextNode(text));
+    };
+
+    function handler(type) {
+      var a = arguments;
+      add(type +" = "+ PlayStates[a[1]]);
+    };
+
+    // http://msdn.microsoft.com/en-us/library/bb249361(VS.85).aspx
+    var PlayStates = {
+       0: "Undefined", // Windows Media Player is in an undefined state.
+       1: "Stopped", // Playback of the current media item is stopped.
+       2: "Paused", // Playback of the current media item is paused. When a media item is paused, resuming playback begins from the same location.
+       3: "Playing", // The current media item is playing.
+       4: "ScanForward", // The current media item is fast forwarding.
+       5: "ScanReverse", // The current media item is fast rewinding.
+       6: "Buffering", // The current media item is getting additional data from the server.
+       7: "Waiting", // Connection is established, but the server is not sending data. Waiting for session to begin.
+       8: "MediaEnded", // Media item has completed playback.
+       9: "Transitioning", // Preparing new media item.
+      10: "Ready", // Ready to begin playing.
+      11: "Reconnecting" // Reconnecting to stream.
+    };
+
+  </script>
+  <script for="wmp" event="PlayStateChange(newState)">
+    // http://msdn.microsoft.com/en-us/library/bb249362(VS.85).aspx
+    handler.call(this, "playstatechange", newState);
+  </script>
+</head>
+<body>
+  <div id="page">
+    <object id="wmp"
+       classid="clsid:6BF52A52-394A-11d3-B153-00C04F79FAA6"
+          type="application/x-oleobject">
+    </object>
+  </div>
+</body>
+</html>
