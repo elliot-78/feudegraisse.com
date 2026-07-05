@@ -54,6 +54,15 @@ video {
     align-items: center;
 }
 
+<label>🔊</label>
+<input
+    type="range"
+    min="0"
+    max="1"
+    step="0.01"
+    value="1"
+    id="volumeSlider">
+
 button {
     background: #e0e0e0;
     border: 2px outset #fff;
@@ -88,7 +97,7 @@ button:active {
 <div class="window">
 
     <div class="titlebar">
-        <div>Windows Media Player - Retro Edition</div>
+        <div>Gargouilles pour toujours</div>
         <div>_ □ ✕</div>
     </div>
 
@@ -99,8 +108,7 @@ button:active {
     </div>
 
     <div class="controls">
-        <button onclick="playVideo()">▶</button>
-        <button onclick="pauseVideo()">⏸</button>
+        <button id="playPauseBtn" onclick="togglePlay()">▶</button>
 
         <div class="bar">
             <div class="progress" id="progress"></div>
@@ -113,16 +121,35 @@ button:active {
 const video = document.getElementById("video");
 const progress = document.getElementById("progress");
 
-function playVideo() {
-    video.play();
-}
+const button = document.getElementById("playPauseBtn");
 
-function pauseVideo() {
-    video.pause();
+function togglePlay() {
+    if (video.paused) {
+        video.play();
+    } else {
+        video.pause();
+    }
 }
+video.addEventListener("play", () => {
+    button.textContent = "⏸";
+});
+
+video.addEventListener("pause", () => {
+    button.textContent = "▶";
+});
+
+video.addEventListener("ended", () => {
+    button.textContent = "▶";
+});
 
 video.addEventListener("timeupdate", () => {
     const percent = (video.currentTime / video.duration) * 100;
     progress.style.width = percent + "%";
+});
+
+const volumeSlider = document.getElementById("volumeSlider");
+
+volumeSlider.addEventListener("input", function () {
+    video.volume = this.value;
 });
 </script>
