@@ -1,0 +1,77 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>À propos</title>
+    <link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.9/p5.min.js"></script>
+<script>
+
+let bg
+let fire
+let pan
+let click
+let noclick
+
+function preload() {
+bg = loadImage("bg.jpg");
+fire = loadImage("fire.gif");
+pan = loadImage("pan.png");
+click = loadImage("click.png");
+noclick = loadImage("noclick.png");
+
+}
+var on = false;
+
+
+function setup() {
+    createCanvas(1920, 1080);
+}
+
+function draw() {
+    background(bg.jpg);
+if (on) {
+    image(fire, 0, 0, width, height);
+} else {
+    image(bg, 0, 0, width, height);
+}
+    }
+    stroke(255);
+    strokeWeight(4);
+    noFill();
+
+ if (mouseX > 250 && mouseX < 350 && mouseY > 150 && mouseY < 250) 
+ {
+
+        fill(255, 255, 0);
+    } else {
+        noFill();
+    }
+
+
+    rectMode(CENTER);
+    rect(300, 200, 200, 100);
+
+
+function mousePressed() {
+    if (mouseX > 250 && mouseX < 350 && mouseY > 150 && mouseY < 250) 
+ {
+        on = !on;
+
+        if (on) {
+    document.body.style.cursor = 'url("click.png"), auto';
+} else {
+    document.body.style.cursor = 'url("noclick.png"), auto';
+}
+    }
+}
+
+    
+   
+    if (mouseIsPressed) {
+        fill(220, 20, 60);
+    } else {
+        noFill();
+    }
+
+</script>
+
